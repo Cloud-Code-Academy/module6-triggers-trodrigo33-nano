@@ -12,7 +12,7 @@ public with sharing class handlerAccount {
         }
     }
 
-    //  Q2 handler method: Sets the inserted account's Billing address field values WITH Shipping Address value if Billing address is null and Shipping address is not null.
+    // Q2 handler method: Sets the inserted account's Billing address field values WITH Shipping Address value if Billing address is null and Shipping address is not null.
     public static void copyShippingAddress (List <Account> accounts) {
         for (Account acc : accounts) {
             if (billingFieldsBlank(acc) && shippingFieldsNotBlank(acc)) 
@@ -26,17 +26,18 @@ public with sharing class handlerAccount {
         }
     }
     
-    // Q2 Helpers method - return true if account billing fields are null
+    // Q2 HELPERS
+    //return true if account billing fields are null
     public static Boolean billingFieldsBlank (Account acc) {
         return (acc.BillingStreet == null && acc.BillingCity == null && acc.BillingState == null && acc.BillingPostalCode == null && acc.BillingCountry == null);
     }
     
-     // Q2 Helpers method - return true if account shipping fields are not null
+     //return true if account shipping fields are not null
     public static Boolean shippingFieldsNotBlank (Account acc) {
         return (acc.ShippingStreet != null || acc.ShippingCity != null || acc.ShippingState != null || acc.ShippingPostalCode != null || acc.ShippingCountry != null);
     }
 
-    // TR - Q3 handler method: Sets the inserted account's rating to Hot if the phone, website, and fax field are populated.
+    // Q3 handler method: Sets the inserted account's rating to Hot if the phone, website, and fax field are populated.
      public static void setHotRating (List <Account> accounts) {
         for (Account acc : accounts) {
             if (setToHotRating(acc)) {
@@ -45,12 +46,12 @@ public with sharing class handlerAccount {
         }
      }
 
-     // Q3 Helper method - return true if phone, webiste, fax are not null.
+     // Q3 HELPER - return true if phone, webiste, fax are not null.
      public static Boolean setToHotRating (Account acc){
         return (acc.Phone != null && acc.Website != null && acc.Fax != null);
      }
      
-     // TR - Q4 Handler method - when an account is inserted, creates a contact record related to account fields. Contact record to hold default values.
+     // Q4 Handler method - when an account is inserted, creates a contact record related to account fields. Contact record to hold default values.
      public static void createContact (List <Account> accounts) {
         List <Contact> newContacts = new List<Contact>();
         for (Account acc : accounts) {

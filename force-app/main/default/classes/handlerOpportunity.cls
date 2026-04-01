@@ -35,11 +35,13 @@ public with sharing class handlerOpportunity {
 
     //Q7 - Update opportunity Primary contact with the contact who's contact.Role = CEO && that belongs to the same account the opportunity is related to.
     // TR - This only assumes we can have one CEO per account.
+            //get contact that has same account as Opportunity and role is CE0
+            //create Map for mapping accountId with Contact record (using above list)
+
+
     public static void updatePrimaryContact (List<Opportunity> newOpportunities){
 
         Set<Id> accountIds = accountIdSet(newOpportunities);
-
-        //get contact that has same account as Opportunity and role is CE0
         List <Contact> contactList = ([
             SELECT Id, AccountId 
             FROM Contact 
