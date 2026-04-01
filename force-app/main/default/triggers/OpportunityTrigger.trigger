@@ -11,4 +11,15 @@ trigger OpportunityTrigger on Opportunity (before update, before delete) {
         //Prevents deletion of closed won opp if account industy is 'Banking'
         handlerOpportunity.preventDeletion(Trigger.old);
      }
+
+    if (Trigger.isAfter && Trigger.isUpdate) {
+        // When opp is updated, update
+        handlerOpportunity.updatePrimaryContact(Trigger.new);
     }
+}
+     /*
+    * Question 7
+    * Opportunity Trigger
+    * When an opportunity is updated set the primary contact on the opportunity to the contact on the same account with the title of 'CEO'.
+    * Trigger should only fire on update.
+    */

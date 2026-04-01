@@ -14,18 +14,14 @@ public with sharing class handlerOpportunity {
     }
 
     //Q6 - Prevents deletion if opportunity is closed won and related account industry is banking
-    public static void preventDeletion (List <Opportunity> oldOpportunities){
         //Create set to collect accountIds from list of opportunities. This is to query for the related Account's field values for each opportunity in the list.
-        Set<Id> accountIds = new Set<Id>();
-        for (Opportunity opp : oldOpportunities) {
-           if (opp.AccountId != null) {
-            accountIds.add(opp.AccountId);
-           }
-            }
-
         //Create map to query for the Industry field. Stores both accountId and account record with queried fields.
         //Loops through each Opportunity in the list and retrieves account record from map.
-        // Then use if statement for validation rule.
+        // Then use if statement for validation rule
+    public static void preventDeletion (List <Opportunity> oldOpportunities){
+
+        Set<Id> accountIds = new Set<Id>(accountIdSet(oldOpportunities));
+
         Map<Id, Account> accountMap = new Map<Id, Account>([Select Id, Industry FROM Account WHERE Id IN: accountIds]);
            for ( Opportunity oppError : oldOpportunities) {
             Account acc = accountMap.get(oppError.AccountId);
@@ -36,4 +32,36 @@ public with sharing class handlerOpportunity {
         }
         //TR - We do NOT use delete here as it is a before statement. We are using the addError to PREVENT a deletion of the marked records in this context.
     }
+
+    //Q7 - Update opportunity Primary contact with the contact who's contact.Role = CEO && that belongs to the same account the opportunity is related to.
+    // TR - This only assumes we can have one CEO per account.
+    public static void updatePrimaryContact (List<Opportunity> newOpportunities){
+
+        //Create Set to collect accountIds. To be used to query for Contacts with same accoundId as triggering Opp.
+        Set<Id> accountIds = new Set<Id>(accountIdSet(newOpportunities));
+
+        //get contact that has same account as Opportunity and role is CE0
+        List <Contact> contactList = ([SELECT Id, AccountId FROM Contact WHERE Title = 'CEO' AND AccountId IN :accountIds]);
+        
+        //loop to update primary contact
+        for (Opportunity opp : newOpportunities) {
+            for (Contact cont : contactList) {
+                if (cont.AccountId == opp.AccountId) {
+                    opp.Primary_Contact__c = cont.Id;
+                }
+            }
+    }
 }
+
+    //Q6 and Q7 Helper class: creates accountId set for query.
+    public static Set<Id> accountIdSet (List <Opportunity> Opportunities){
+        Set<Id> accountIds = new Set<Id>();
+            for (Opportunity opp : Opportunities) {
+                if (opp.AccountId != null) {
+                    accountIds.add(opp.AccountId);
+                }
+            }
+        return accountIds;
+    }
+}
+// note to self; need to continue on Q7. Unsure if current Map workds to retrieve the correct contact and opportunity.
