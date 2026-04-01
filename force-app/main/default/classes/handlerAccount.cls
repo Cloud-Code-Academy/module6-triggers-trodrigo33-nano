@@ -11,8 +11,8 @@ public with sharing class handlerAccount {
     }
 
     //  Q2 handler method: Sets the inserted account's Billing address field values WITH Shipping Address value if Billing address is null and Shipping address is not null.
-    public static void copyShippingAddress (List <Account> shippingAddressAccounts) {
-        for (Account acc : shippingAddressAccounts) {
+    public static void copyShippingAddress (List <Account> accounts) {
+        for (Account acc : accounts) {
             if (billingFieldsBlank(acc) && shippingFieldsNotBlank(acc)) 
                 {
                     acc.BillingCity = acc.ShippingCity;
@@ -46,5 +46,17 @@ public with sharing class handlerAccount {
      // Q3 Helper method - return true if phone, webiste, fax are not null.
      public static Boolean setToHotRating (Account acc){
         return (acc.Phone != null && acc.Website != null && acc.Fax != null);
-     } 
+     }
+     
+     // TR - Q4 Handler method - when an account is inserted, creates a contact record related to account fields. Contact record to hold default values.
+     public static void createContact (List <Account> accounts) {
+        List <Contact> newContacts = new List<Contact>();
+        for (Account acc : accounts) {
+            Contact con = new Contact(AccountId = acc.Id);
+            con.LastName = 'DefaultContact';
+            con.Email = 'default@email.com';
+            newContacts.add(con);
+        }
+        insert newContacts;
+       }
 }
