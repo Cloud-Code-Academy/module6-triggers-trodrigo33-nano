@@ -1,3 +1,5 @@
+//This handlerAccount is currently used by 'AccountTrigger.trigger'
+
 public with sharing class handlerAccount {
 
     // Q1 handler method: Sets the inserted account field's type to Prospect if original value is null.
