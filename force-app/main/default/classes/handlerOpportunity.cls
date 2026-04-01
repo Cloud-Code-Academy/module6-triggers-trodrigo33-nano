@@ -37,18 +37,25 @@ public with sharing class handlerOpportunity {
     // TR - This only assumes we can have one CEO per account.
     public static void updatePrimaryContact (List<Opportunity> newOpportunities){
 
-        //Create Set to collect accountIds. To be used to query for Contacts with same accoundId as triggering Opp.
-        Set<Id> accountIds = new Set<Id>(accountIdSet(newOpportunities));
+        Set<Id> accountIds = accountIdSet(newOpportunities);
 
         //get contact that has same account as Opportunity and role is CE0
-        List <Contact> contactList = ([SELECT Id, AccountId FROM Contact WHERE Title = 'CEO' AND AccountId IN :accountIds]);
+        List <Contact> contactList = ([
+            SELECT Id, AccountId 
+            FROM Contact 
+            WHERE Title = 'CEO' 
+            AND AccountId IN :accountIds]);
         
+        //create Map for mapping accountId with Contact record (using above list)
+        Map <Id, Contact> conCEO = new Map<Id, Contact>();
+        for (Contact con : contactList) {
+            conCEO.put(con.AccountId, con);
+        }
+
         //loop to update primary contact
         for (Opportunity opp : newOpportunities) {
-            for (Contact cont : contactList) {
-                if (cont.AccountId == opp.AccountId) {
-                    opp.Primary_Contact__c = cont.Id;
-                }
+            if (conCEO.containsKey(opp.AccountId)) {
+                opp.Primary_Contact__c = conCEO.get(opp.AccountId).Id;
             }
     }
 }
@@ -65,3 +72,4 @@ public with sharing class handlerOpportunity {
     }
 }
 // note to self; need to continue on Q7. Unsure if current Map workds to retrieve the correct contact and opportunity.
+// new note: the primary contact is not being updated. will need to redo for nested loop. Must try and create and use a contact map like i initially tried before changing it to a list.

@@ -4,6 +4,7 @@ trigger OpportunityTrigger on Opportunity (before update, before delete) {
     if (Trigger.isBefore && Trigger.isUpdate){
         //validates to see if updated opp record has an amount greater than 5000. Throws error if false. The method allows for partial DML update using database.update();
         handlerOpportunity.amountValidation(Trigger.old, Trigger.new);
+        handlerOpportunity.updatePrimaryContact(Trigger.new);
      }
 
     // TR - Before Delete
@@ -11,11 +12,6 @@ trigger OpportunityTrigger on Opportunity (before update, before delete) {
         //Prevents deletion of closed won opp if account industy is 'Banking'
         handlerOpportunity.preventDeletion(Trigger.old);
      }
-
-    if (Trigger.isAfter && Trigger.isUpdate) {
-        // When opp is updated, update
-        handlerOpportunity.updatePrimaryContact(Trigger.new);
-    }
 }
      /*
     * Question 7
