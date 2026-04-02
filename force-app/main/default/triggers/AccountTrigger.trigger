@@ -1,5 +1,4 @@
 trigger AccountTrigger on Account (before insert, after insert) {
-
     //TR - Before Insert
     if (Trigger.isBefore && Trigger.isInsert){
             handlerAccount.updateToProspect(Trigger.new);
